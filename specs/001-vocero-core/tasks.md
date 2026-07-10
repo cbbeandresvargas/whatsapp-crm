@@ -92,13 +92,13 @@ US1, US2 (MVP gate) → US3, US4, US5, US8 (núcleo P1) → US6 (P2) → US7 (P3
 
 **Independent Test**: inbound de número nuevo → aparece en Contactos y como card en "Nuevo"; arrastrar a otra etapa → persiste tras recargar
 
-- [ ] T039 [US2] Auto-registro de lead en primera conversación (etapa "Nuevo", position al final) integrado en src/server/inbox/ingest.ts
-- [ ] T040 [US2] APIs contactos: GET (?q= busca nombre/teléfono) / POST / PATCH (notas, archivar) en src/app/api/contacts/
-- [ ] T041 [US2] APIs pipeline: CRUD etapas (DELETE exige moveTo; anclas won/lost no borrables), PATCH /api/pipeline/leads/[id] {stageId, position} en src/app/api/pipeline/
-- [ ] T042 [P] [US2] UI contactos src/app/(app)/contacts/ — tabla con búsqueda, edición de notas, archivar, link a conversación
-- [ ] T043 [US2] UI kanban src/app/(app)/pipeline/ con @dnd-kit — columnas por etapa, cards (nombre, último mensaje, tiempo), drag&drop persiste vía PATCH, gestión de etapas
-- [ ] T044 [P] [US2] tests/unit/tenant.test.ts — queries de contactos/conversaciones/leads jamás cruzan organization_id
-- [ ] T045 [US2] Guion E2E tests/e2e/us2-pipeline.md + ejecutarlo: auto-registro, drag persiste tras reload, búsqueda
+- [X] T039 [US2] Auto-registro de lead en primera conversación (etapa "Nuevo", position al final) integrado en src/server/inbox/ingest.ts
+- [X] T040 [US2] APIs contactos: GET (?q= busca nombre/teléfono) / POST / PATCH (notas, archivar) en src/app/api/contacts/
+- [X] T041 [US2] APIs pipeline: CRUD etapas (DELETE exige moveTo; anclas won/lost no borrables), PATCH /api/pipeline/leads/[id] {stageId, position} en src/app/api/pipeline/
+- [X] T042 [P] [US2] UI contactos src/app/(app)/contacts/ — tabla con búsqueda, edición de notas, archivar, link a conversación
+- [X] T043 [US2] UI kanban src/app/(app)/pipeline/ con @dnd-kit — columnas por etapa, cards (nombre, último mensaje, tiempo), drag&drop persiste vía PATCH, gestión de etapas
+- [X] T044 [P] [US2] tests/unit/tenant.test.ts — queries de contactos/conversaciones/leads jamás cruzan organization_id
+- [X] T045 [US2] Guion E2E tests/e2e/us2-pipeline.md + ejecutarlo: auto-registro, drag persiste tras reload, búsqueda
 
 **Checkpoint 🎯 GATE MVP**: US1+US2 E2E verdes ANTES de cualquier línea de US3+
 

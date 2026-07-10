@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import type { ConversationDto, MessageDto } from "@/lib/types";
 import { useEvents } from "@/components/use-events";
 import { ConversationList } from "./conversation-list";
@@ -50,6 +51,15 @@ export function InboxClient() {
     },
     [refetchMessages]
   );
+
+  // Enlace directo desde Contactos/Pipeline: /inbox?contact=<id>
+  const searchParams = useSearchParams();
+  const contactParam = searchParams.get("contact");
+  useEffect(() => {
+    if (!contactParam || selectedIdRef.current) return;
+    const match = conversations.find((c) => c.contact.id === contactParam);
+    if (match) select(match.id);
+  }, [contactParam, conversations, select]);
 
   useEvents({
     onMessageNew: ({ conversationId, message }) => {

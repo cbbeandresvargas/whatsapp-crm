@@ -1,7 +1,7 @@
+import { PipelineClient } from "@/components/pipeline/pipeline-client";
+
+export const dynamic = "force-dynamic";
+
 export default function PipelinePage() {
-  return (
-    <div className="flex h-full items-center justify-center text-muted-foreground">
-      Pipeline — en construcción (US2)
-    </div>
-  );
+  return <PipelineClient />;
 }
