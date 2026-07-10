@@ -62,11 +62,20 @@ export async function onUserCreated(userId: string, userName: string) {
 export async function resolveActiveOrganizationId(
   userId: string
 ): Promise<string | null> {
+  return (await resolveMembership(userId))?.organizationId ?? null;
+}
+
+export async function resolveMembership(
+  userId: string
+): Promise<{ organizationId: string; role: string } | null> {
   const db = getDb();
   const rows = await db
-    .select({ organizationId: schema.member.organizationId })
+    .select({
+      organizationId: schema.member.organizationId,
+      role: schema.member.role,
+    })
     .from(schema.member)
     .where(eq(schema.member.userId, userId))
     .limit(1);
-  return rows[0]?.organizationId ?? null;
+  return rows[0] ?? null;
 }

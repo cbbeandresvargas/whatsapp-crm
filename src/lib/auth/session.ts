@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import { getAuth } from "@/lib/auth";
-import { resolveActiveOrganizationId } from "@/server/auth/on-signup";
+import { resolveMembership } from "@/server/auth/on-signup";
 
 export type SessionContext = {
   userId: string;
@@ -23,21 +23,16 @@ export async function requireSession(): Promise<SessionContext> {
   const auth = getAuth();
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) throw new UnauthorizedError();
-  let organizationId = (
-    session.session as { activeOrganizationId?: string | null }
-  ).activeOrganizationId;
-  if (!organizationId) {
-    // La sesión del registro inicial se crea antes de que el hook de alta
-    // termine de sembrar la organización: se resuelve por membresía.
-    organizationId = await resolveActiveOrganizationId(session.user.id);
-  }
-  if (!organizationId) {
+  // La sesión puede crearse antes de que la membresía exista (registro
+  // inicial) — la membresía en BD es la fuente de verdad de org + rol.
+  const membership = await resolveMembership(session.user.id);
+  if (!membership) {
     throw new UnauthorizedError("Sesión sin organización activa");
   }
   return {
     userId: session.user.id,
-    organizationId,
-    role: "member",
+    organizationId: membership.organizationId,
+    role: membership.role,
   };
 }
 
