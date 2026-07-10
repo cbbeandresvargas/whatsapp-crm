@@ -1,7 +1,7 @@
+import { InboxClient } from "@/components/inbox/inbox-client";
+
+export const dynamic = "force-dynamic";
+
 export default function InboxPage() {
-  return (
-    <div className="flex h-full items-center justify-center text-muted-foreground">
-      Bandeja — en construcción (US1)
-    </div>
-  );
+  return <InboxClient />;
 }

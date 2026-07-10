@@ -66,21 +66,21 @@ US1, US2 (MVP gate) → US3, US4, US5, US8 (núcleo P1) → US6 (P2) → US7 (P3
 
 **Independent Test**: con número conectado (mock), `POST wa-mock/inbound` → mensaje visible en bandeja abierta ≤2s sin refrescar; responder → aparece en outbox del mock; mismo waMessageId 2 veces → un solo mensaje; ventana cerrada → input bloqueado con oferta de plantilla
 
-- [ ] T024 [US1] src/app/api/webhooks/wa/[webhookToken]/route.ts — GET handshake (hub.mode/verify_token/challenge; segmento timing-safe vs META_WEBHOOK_VERIFY_TOKEN, si no → 404 sin efectos) (contrato webhook.md)
-- [ ] T025 [US1] Webhook POST en la misma ruta: leer body CRUDO, capa 2 firma `x-hub-signature-256` solo si META_APP_SECRET (inválida → 401), responder 200 siempre, procesar en `after()`, enrutar por `metadata.phone_number_id` / `entry[].id` (DV-VC-02/03)
-- [ ] T026 [P] [US1] tests/unit/webhook.test.ts — firma válida/ inválida/ sin secret, segmento incorrecto → 404 sin side effects
-- [ ] T027 [US1] src/server/inbox/ingest.ts — resolver org por phone_number_id, getOrCreateContact (UPSERT org+phone, coalesce nombre), getOrCreateConversation (no-test), insertar message `.onConflictDoNothing({target: wa_message_id}).returning()` → isNew gate, unread_count+last_inbound_at/last_message_at, media entrante = chip por tipo, publish SSE `message.new`/`conversation.updated`
-- [ ] T028 [US1] src/server/inbox/status.ts — statuses del webhook con upgrades monotónicos (pending<sent<delivered<read; failed siempre) + SSE `message.status`
-- [ ] T029 [P] [US1] tests/unit/ingest.test.ts — dedup por wa_message_id (2ª ingesta no re-dispara) y monotonicidad de status
-- [ ] T030 [US1] src/server/inbox/window.ts — ventana 24h desde last_inbound_at (isOpen, remaining) + tests/unit/window.test.ts (borde exacto 24h)
-- [ ] T031 [US1] src/server/inbox/send.ts — **aserción dura: conversación `is_test` → throw antes de cualquier llamada Graph**; check ventana; enviar texto vía lib/meta; persistir out+pending con wa_message_id devuelto; SSE
-- [ ] T032 [P] [US1] tests/unit/send-sandbox.test.ts — send con is_test lanza y NO invoca el cliente Graph (spy)
-- [ ] T033 [US1] APIs: GET /api/conversations?since= (excluye is_test), GET/POST /api/conversations/[id]/messages (POST texto → 409 ventana cerrada), PATCH /api/conversations/[id] ({aiEnabled, reactivate}) en src/app/api/conversations/
-- [ ] T034 [US1] wa-mock completo bajo src/app/api/dev/wa-mock/ — inbound (payload real firmado con META_APP_SECRET, POST loopback 127.0.0.1, overrides waMessageId/timestamp), status, template-status, graph/[...path] (messages→outbox+wamid.mock, GET número con token `-invalid`→401 code 190, message_templates→PENDING), outbox GET/DELETE (contrato mocks.md)
-- [ ] T035 [US1] UI bandeja 3 columnas en src/app/(app)/inbox/ — lista conversaciones (avatar iniciales color estable, badge no-leídos, hora), hilo (burbujas in/out, estados ✓, chips de media, marca `ai_generated`), panel contacto (datos, etapa, toggle IA, notas)
-- [ ] T036 [US1] src/components/use-events.ts — hook EventSource: suscripción tipada, en `open` tras reconexión refetch con `since=` (catch-up del contrato sse.md)
-- [ ] T037 [US1] Ventana en UI: indicador de tiempo restante; cerrada → composer bloqueado ofreciendo plantillas aprobadas (estado vacío si no hay) en src/app/(app)/inbox/
-- [ ] T038 [US1] Guion E2E tests/e2e/us1-inbox.md + ejecutarlo con Playwright: registro→conectar mock→inbound visible ≤2s→responder→outbox→dedup→ventana vieja (timestamp override) → 409 + composer bloqueado
+- [X] T024 [US1] src/app/api/webhooks/wa/[webhookToken]/route.ts — GET handshake (hub.mode/verify_token/challenge; segmento timing-safe vs META_WEBHOOK_VERIFY_TOKEN, si no → 404 sin efectos) (contrato webhook.md)
+- [X] T025 [US1] Webhook POST en la misma ruta: leer body CRUDO, capa 2 firma `x-hub-signature-256` solo si META_APP_SECRET (inválida → 401), responder 200 siempre, procesar en `after()`, enrutar por `metadata.phone_number_id` / `entry[].id` (DV-VC-02/03)
+- [X] T026 [P] [US1] tests/unit/webhook.test.ts — firma válida/ inválida/ sin secret, segmento incorrecto → 404 sin side effects
+- [X] T027 [US1] src/server/inbox/ingest.ts — resolver org por phone_number_id, getOrCreateContact (UPSERT org+phone, coalesce nombre), getOrCreateConversation (no-test), insertar message `.onConflictDoNothing({target: wa_message_id}).returning()` → isNew gate, unread_count+last_inbound_at/last_message_at, media entrante = chip por tipo, publish SSE `message.new`/`conversation.updated`
+- [X] T028 [US1] src/server/inbox/status.ts — statuses del webhook con upgrades monotónicos (pending<sent<delivered<read; failed siempre) + SSE `message.status`
+- [X] T029 [P] [US1] tests/unit/ingest.test.ts — dedup por wa_message_id (2ª ingesta no re-dispara) y monotonicidad de status
+- [X] T030 [US1] src/server/inbox/window.ts — ventana 24h desde last_inbound_at (isOpen, remaining) + tests/unit/window.test.ts (borde exacto 24h)
+- [X] T031 [US1] src/server/inbox/send.ts — **aserción dura: conversación `is_test` → throw antes de cualquier llamada Graph**; check ventana; enviar texto vía lib/meta; persistir out+pending con wa_message_id devuelto; SSE
+- [X] T032 [P] [US1] tests/unit/send-sandbox.test.ts — send con is_test lanza y NO invoca el cliente Graph (spy)
+- [X] T033 [US1] APIs: GET /api/conversations?since= (excluye is_test), GET/POST /api/conversations/[id]/messages (POST texto → 409 ventana cerrada), PATCH /api/conversations/[id] ({aiEnabled, reactivate}) en src/app/api/conversations/
+- [X] T034 [US1] wa-mock completo bajo src/app/api/dev/wa-mock/ — inbound (payload real firmado con META_APP_SECRET, POST loopback 127.0.0.1, overrides waMessageId/timestamp), status, template-status, graph/[...path] (messages→outbox+wamid.mock, GET número con token `-invalid`→401 code 190, message_templates→PENDING), outbox GET/DELETE (contrato mocks.md)
+- [X] T035 [US1] UI bandeja 3 columnas en src/app/(app)/inbox/ — lista conversaciones (avatar iniciales color estable, badge no-leídos, hora), hilo (burbujas in/out, estados ✓, chips de media, marca `ai_generated`), panel contacto (datos, etapa, toggle IA, notas)
+- [X] T036 [US1] src/components/use-events.ts — hook EventSource: suscripción tipada, en `open` tras reconexión refetch con `since=` (catch-up del contrato sse.md)
+- [X] T037 [US1] Ventana en UI: indicador de tiempo restante; cerrada → composer bloqueado ofreciendo plantillas aprobadas (estado vacío si no hay) en src/app/(app)/inbox/
+- [X] T038 [US1] Guion E2E tests/e2e/us1-inbox.md + ejecutarlo con Playwright: registro→conectar mock→inbound visible ≤2s→responder→outbox→dedup→ventana vieja (timestamp override) → 409 + composer bloqueado
 
 **Checkpoint**: US1 funcional E2E contra wa-mock
 
