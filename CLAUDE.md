@@ -5,13 +5,16 @@
 > núcleo evergreen: consérvalas. Lo de **stack** y **feature activa** se rellena por
 > proyecto. Edita lo que esté entre `[corchetes]`.
 
-## Active feature: [NNN-nombre-feature]
+## Active feature: 001-vocero-core
 
-Plan técnico: [specs/NNN-nombre-feature/plan.md](specs/NNN-nombre-feature/plan.md)
+Plan técnico: [specs/001-vocero-core/plan.md](specs/001-vocero-core/plan.md)
 (spec, research, data-model, contracts y quickstart en la misma carpeta).
 
-[Resumen de 1-2 párrafos de la feature en curso. Cuando termines una feature, mueve su
-resumen a una sección "## Feature previa: ..." debajo, como bitácora.]
+Núcleo v1 de Vocero CRM: bandeja de WhatsApp en tiempo real (SSE), contactos + pipeline
+kanban, agente de IA con knowledge base y acciones tipadas, Laboratorio de
+auto-evaluación (6 personas guionadas + juez LLM), wizard de conexión del número (modo
+directo o modo agencia/Tech Provider), plantillas acotadas, multi-usuario mínimo e
+instalación en 15 minutos (Coolify o docker compose + Caddy).
 
 <!--
 ## Feature previa: [NNN-...]
