@@ -120,7 +120,7 @@ export function LabClient() {
     return (
       <div className="flex h-full flex-col">
         <Header running={false} launching={false} onLaunch={() => {}} disabled />
-        <div className="m-6 rounded-lg border border-primary/30 bg-primary/5 p-8 text-center">
+        <div className="m-6 rounded-lg border border-brand-soft bg-brand-tint p-8 text-center">
           <Sparkles className="mx-auto mb-2 h-8 w-8 text-primary" />
           <p className="font-medium">
             Configura tu proveedor de IA para usar el Laboratorio
@@ -243,7 +243,7 @@ function HistoryList({
             {run.delta !== null && run.delta !== 0 && (
               <span
                 className={`flex items-center gap-0.5 text-xs font-medium ${
-                  run.delta > 0 ? "text-emerald-400" : "text-red-400"
+                  run.delta > 0 ? "text-success" : "text-destructive"
                 }`}
               >
                 {run.delta > 0 ? (
@@ -314,7 +314,7 @@ function Report({
               ))}
             </div>
             {cases.some((c) => c.status === "judge_failed") && (
-              <p className="mt-3 text-xs text-amber-400">
+              <p className="mt-3 text-xs text-[#8a6d3b]">
                 {cases.filter((c) => c.status === "judge_failed").length} caso(s) sin
                 veredicto (el juez no respondió válido); excluidos del score.
               </p>
@@ -335,11 +335,11 @@ function CaseCard({ testCase, onApplied }: { testCase: Case; onApplied: () => vo
   const c = testCase;
   const icon =
     c.veredicto === "verde" ? (
-      <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+      <CheckCircle2 className="h-4 w-4 text-success" />
     ) : c.veredicto === "amarillo" ? (
-      <AlertTriangle className="h-4 w-4 text-amber-400" />
+      <AlertTriangle className="h-4 w-4 text-[#8a6d3b]" />
     ) : c.veredicto === "rojo" ? (
-      <XCircle className="h-4 w-4 text-red-400" />
+      <XCircle className="h-4 w-4 text-destructive" />
     ) : (
       <AlertTriangle className="h-4 w-4 text-muted-foreground" />
     );
@@ -378,7 +378,7 @@ function CaseCard({ testCase, onApplied }: { testCase: Case; onApplied: () => vo
                 <p key={i}>
                   <span
                     className={
-                      t.role === "cliente" ? "text-sky-400" : "text-primary"
+                      t.role === "cliente" ? "text-[#5b7291]" : "text-primary"
                     }
                   >
                     {t.role === "cliente" ? "Cliente" : "Agente"}:
@@ -427,7 +427,7 @@ function HallazgoCard({
   }
 
   return (
-    <div className="rounded-md border border-amber-600/25 bg-amber-600/5 p-3">
+    <div className="rounded-md border border-[#ece2cf] bg-[#faf7f0] p-3">
       <div className="flex items-center justify-between">
         <Badge variant="warning">{TIPO_LABELS[hallazgo.tipo]}</Badge>
         {hallazgo.sugerencia && !applied && !editing && (
@@ -436,7 +436,7 @@ function HallazgoCard({
           </Button>
         )}
         {applied && (
-          <span className="text-xs text-emerald-400">Agregado al conocimiento ✓</span>
+          <span className="text-xs text-success">Agregado al conocimiento ✓</span>
         )}
       </div>
       <p className="mt-2 text-sm text-muted-foreground">

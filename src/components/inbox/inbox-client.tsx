@@ -2,6 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { PanelRight } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { ContactAvatar } from "@/components/avatar";
 import type { ConversationDto, MessageDto } from "@/lib/types";
 import { useEvents } from "@/components/use-events";
 import { ConversationList } from "./conversation-list";
@@ -10,9 +13,20 @@ import { Composer } from "./composer";
 import { ContactPanel } from "./contact-panel";
 
 export function InboxClient() {
-  const [conversations, setConversations] = useState<ConversationDto[]>([]);
+  const [conversations, setConversations] = useState<ConversationDto[] | null>(
+    null
+  );
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [messages, setMessages] = useState<MessageDto[]>([]);
+  const [panelOpen, setPanelOpen] = useState(true);
+
+  useEffect(() => {
+    setPanelOpen(localStorage.getItem("vocero.panelOpen") !== "false");
+  }, []);
+  const togglePanel = useCallback((open: boolean) => {
+    setPanelOpen(open);
+    localStorage.setItem("vocero.panelOpen", String(open));
+  }, []);
   const selectedIdRef = useRef<string | null>(null);
   selectedIdRef.current = selectedId;
   const lastFetchRef = useRef<string | null>(null);
@@ -57,7 +71,7 @@ export function InboxClient() {
   const contactParam = searchParams.get("contact");
   useEffect(() => {
     if (!contactParam || selectedIdRef.current) return;
-    const match = conversations.find((c) => c.contact.id === contactParam);
+    const match = conversations?.find((c) => c.contact.id === contactParam);
     if (match) select(match.id);
   }, [contactParam, conversations, select]);
 
@@ -94,7 +108,7 @@ export function InboxClient() {
     },
   });
 
-  const selected = conversations.find((c) => c.id === selectedId) ?? null;
+  const selected = conversations?.find((c) => c.id === selectedId) ?? null;
 
   const sendText = useCallback(
     async (text: string): Promise<string | null> => {
@@ -135,11 +149,8 @@ export function InboxClient() {
   );
 
   return (
-    <div className="grid h-full grid-cols-[320px_1fr_300px]">
-      <section className="overflow-y-auto border-r">
-        <header className="sticky top-0 border-b bg-background/95 px-4 py-3 backdrop-blur">
-          <h2 className="font-semibold">Bandeja</h2>
-        </header>
+    <div className="flex h-full">
+      <section className="w-[360px] shrink-0 overflow-hidden border-r">
         <ConversationList
           conversations={conversations}
           selectedId={selectedId}
@@ -148,16 +159,42 @@ export function InboxClient() {
         />
       </section>
 
-      <section className="flex min-w-0 flex-col">
+      <section className="flex min-w-0 flex-1 flex-col">
         {selected ? (
           <>
-            <header className="flex items-center justify-between border-b bg-card/60 px-4 py-3">
-              <div>
-                <p className="text-sm font-semibold">{selected.contact.name}</p>
-                <p className="text-xs text-muted-foreground">
-                  +{selected.contact.phone}
-                </p>
+            <header className="flex items-center justify-between border-b bg-background px-4 py-2.5">
+              <div className="flex items-center gap-3">
+                <ContactAvatar
+                  name={selected.contact.name}
+                  seed={selected.contact.id}
+                  size="md"
+                />
+                <div>
+                  <p className="text-[15px] font-[650] leading-tight">
+                    {selected.contact.name}
+                  </p>
+                  <p
+                    className={
+                      selected.windowOpen
+                        ? "text-xs font-medium text-success"
+                        : "text-xs text-text-3"
+                    }
+                  >
+                    {selected.windowOpen
+                      ? "ventana abierta"
+                      : `+${selected.contact.phone}`}
+                  </p>
+                </div>
               </div>
+              {!panelOpen && (
+                <button
+                  onClick={() => togglePanel(true)}
+                  aria-label="Mostrar detalles"
+                  className="rounded-sm border p-1.5 text-text-3 hover:bg-accent hover:text-foreground"
+                >
+                  <PanelRight className="h-4 w-4" strokeWidth={1.7} />
+                </button>
+              )}
             </header>
             <MessageThread messages={messages} />
             <Composer
@@ -171,21 +208,25 @@ export function InboxClient() {
             />
           </>
         ) : (
-          <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
+          <div className="flex flex-1 items-center justify-center bg-chat text-sm text-text-3">
             Elige una conversación para ver el hilo
           </div>
         )}
       </section>
 
-      <section className="border-l">
-        {selected ? (
-          <ContactPanel
-            conversation={selected}
-            onPatchConversation={patchConversation}
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center p-6 text-center text-xs text-muted-foreground">
-            El panel del contacto aparece al elegir una conversación
+      <section
+        className={cn(
+          "shrink-0 overflow-hidden border-l transition-[width] duration-[220ms]",
+          panelOpen && selected ? "w-[320px]" : "w-0 border-l-0"
+        )}
+      >
+        {selected && (
+          <div className="h-full w-[320px]">
+            <ContactPanel
+              conversation={selected}
+              onPatchConversation={patchConversation}
+              onClose={() => togglePanel(false)}
+            />
           </div>
         )}
       </section>

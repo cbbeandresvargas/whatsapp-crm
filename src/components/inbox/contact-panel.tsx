@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { UserRound } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { Check, ChevronRight, UserRound } from "lucide-react";
 import type { ConversationDto, StageDto } from "@/lib/types";
-import { formatPhone } from "@/lib/utils";
+import { cn, formatPhone } from "@/lib/utils";
 import { ContactAvatar } from "@/components/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 const HANDOFF_LABELS: Record<string, string> = {
@@ -20,44 +18,53 @@ const HANDOFF_LABELS: Record<string, string> = {
 export function ContactPanel({
   conversation,
   onPatchConversation,
+  onClose,
 }: {
   conversation: ConversationDto;
   onPatchConversation: (patch: {
     aiEnabled?: boolean;
     reactivate?: boolean;
   }) => Promise<void>;
+  onClose: () => void;
 }) {
   const [notes, setNotes] = useState("");
   const [notesLoaded, setNotesLoaded] = useState(false);
   const [savingNotes, setSavingNotes] = useState(false);
-  const [stageName, setStageName] = useState<string | null>(null);
+  const [stages, setStages] = useState<StageDto[]>([]);
+  const [currentStageId, setCurrentStageId] = useState<string | null>(null);
+  const [leadId, setLeadId] = useState<string | null>(null);
 
   const contactId = conversation.contact.id;
 
-  useEffect(() => {
-    let cancelled = false;
-    setNotesLoaded(false);
-    setStageName(null);
-    fetch(`/api/contacts/${contactId}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then(
-        (d: {
-          contact?: { notes?: string | null };
-          stage?: StageDto | null;
-        } | null) => {
-          if (cancelled) return;
-          setNotes(d?.contact?.notes ?? "");
-          setStageName(d?.stage?.name ?? null);
-          setNotesLoaded(true);
-        }
-      )
-      .catch(() => {
-        if (!cancelled) setNotesLoaded(true);
-      });
-    return () => {
-      cancelled = true;
-    };
+  const refetch = useCallback(async () => {
+    const [detail, stagesRes] = await Promise.all([
+      fetch(`/api/contacts/${contactId}`).then((r) => (r.ok ? r.json() : null)),
+      fetch("/api/pipeline/stages").then((r) => (r.ok ? r.json() : null)),
+    ]).catch(() => [null, null]);
+    if (detail) {
+      setNotes(detail.contact?.notes ?? "");
+      setCurrentStageId(detail.stage?.id ?? null);
+      setLeadId(detail.lead?.id ?? null);
+    }
+    if (stagesRes) setStages(stagesRes.stages);
+    setNotesLoaded(true);
   }, [contactId]);
+
+  useEffect(() => {
+    setNotesLoaded(false);
+    void refetch();
+  }, [refetch]);
+
+  async function moveToStage(stageId: string) {
+    if (!leadId || stageId === currentStageId) return;
+    setCurrentStageId(stageId); // optimista
+    await fetch(`/api/pipeline/leads/${leadId}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ stageId, position: 0 }),
+    }).catch(() => null);
+    void refetch();
+  }
 
   async function saveNotes() {
     setSavingNotes(true);
@@ -69,87 +76,161 @@ export function ContactPanel({
     setSavingNotes(false);
   }
 
-  return (
-    <div className="flex h-full flex-col gap-5 overflow-y-auto p-5">
-      <div className="flex flex-col items-center gap-2 text-center">
-        <ContactAvatar
-          name={conversation.contact.name}
-          seed={conversation.contact.id}
-          size="lg"
-        />
-        <div>
-          <p className="font-semibold">{conversation.contact.name}</p>
-          <p className="text-sm text-muted-foreground">
-            {formatPhone(conversation.contact.phone)}
-          </p>
-        </div>
-        {stageName && <Badge variant="secondary">{stageName}</Badge>}
-      </div>
+  const currentIndex = stages.findIndex((s) => s.id === currentStageId);
 
-      {conversation.handoffAt && (
-        <div className="rounded-md border border-amber-600/30 bg-amber-600/10 p-3">
-          <p className="flex items-center gap-1.5 text-sm font-medium text-amber-300">
-            <UserRound className="h-4 w-4" /> Atención humana
+  return (
+    <div className="flex h-full flex-col">
+      <header className="sticky top-0 flex items-center justify-between border-b bg-background px-4 py-3">
+        <h3 className="text-[13px] font-[650] uppercase tracking-wide text-text-2">
+          Detalles
+        </h3>
+        <button
+          onClick={onClose}
+          aria-label="Ocultar panel"
+          className="rounded p-1 text-text-3 hover:bg-accent hover:text-foreground"
+        >
+          <ChevronRight className="h-4 w-4" strokeWidth={1.7} />
+        </button>
+      </header>
+
+      <div className="flex-1 overflow-y-auto">
+        {/* Contacto */}
+        <section className="border-b p-4">
+          <div className="flex items-center gap-3">
+            <ContactAvatar
+              name={conversation.contact.name}
+              seed={conversation.contact.id}
+              size="md"
+            />
+            <div className="min-w-0">
+              <p className="truncate text-sm font-[650]">
+                {conversation.contact.name}
+              </p>
+              <p className="text-xs text-text-3">
+                {formatPhone(conversation.contact.phone)}
+              </p>
+            </div>
+          </div>
+
+          {conversation.handoffAt && (
+            <div className="mt-3 rounded-md border border-[#ece2cf] bg-[#faf7f0] p-3">
+              <p className="flex items-center gap-1.5 text-[13px] font-medium text-[#8a6d3b]">
+                <UserRound className="h-4 w-4" strokeWidth={1.7} /> Atención humana
+              </p>
+              <p className="mt-1 text-xs text-[#8a6d3b]/80">
+                {HANDOFF_LABELS[conversation.handoffReason ?? ""] ??
+                  "La IA está en pausa en esta conversación."}
+              </p>
+              <Button
+                size="sm"
+                variant="outline"
+                className="mt-2 w-full"
+                onClick={() => void onPatchConversation({ reactivate: true })}
+              >
+                Reactivar IA
+              </Button>
+            </div>
+          )}
+
+          <div className="mt-3 flex items-center justify-between rounded-md border bg-secondary/50 px-3 py-2.5">
+            <div>
+              <p className="text-[13px] font-medium">IA en esta conversación</p>
+              <p className="text-[11px] text-text-3">
+                {conversation.aiEnabled ? "Respondiendo" : "En pausa"}
+              </p>
+            </div>
+            <button
+              role="switch"
+              aria-checked={conversation.aiEnabled}
+              aria-label="IA en esta conversación"
+              onClick={() =>
+                void onPatchConversation({ aiEnabled: !conversation.aiEnabled })
+              }
+              className={cn(
+                "relative h-5 w-9 rounded-full transition-colors",
+                conversation.aiEnabled ? "bg-brand" : "bg-border-strong"
+              )}
+            >
+              <span
+                className={cn(
+                  "absolute top-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-transform",
+                  conversation.aiEnabled ? "translate-x-[18px]" : "translate-x-0.5"
+                )}
+              />
+            </button>
+          </div>
+        </section>
+
+        {/* Stepper de etapa */}
+        {stages.length > 0 && leadId && (
+          <section className="border-b p-4">
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-text-3">
+              Etapa del pipeline
+            </p>
+            <ol>
+              {stages.map((s, i) => {
+                const done = currentIndex >= 0 && i < currentIndex;
+                const current = s.id === currentStageId;
+                return (
+                  <li key={s.id} className="relative flex gap-3 pb-4 last:pb-0">
+                    {i < stages.length - 1 && (
+                      <span
+                        className={cn(
+                          "absolute left-[7px] top-4 h-full w-px",
+                          done ? "bg-brand" : "bg-border-strong"
+                        )}
+                      />
+                    )}
+                    <button
+                      onClick={() => void moveToStage(s.id)}
+                      aria-label={`Mover a ${s.name}`}
+                      className={cn(
+                        "relative z-10 mt-0.5 flex h-[15px] w-[15px] shrink-0 items-center justify-center rounded-full transition-colors",
+                        done && "bg-brand text-white",
+                        current && "bg-brand ring-4 ring-brand-soft",
+                        !done && !current && "border border-border-strong bg-background hover:border-brand"
+                      )}
+                    >
+                      {done && <Check className="h-2.5 w-2.5" strokeWidth={3} />}
+                    </button>
+                    <button
+                      onClick={() => void moveToStage(s.id)}
+                      className={cn(
+                        "text-left text-[13px]",
+                        current ? "font-[650] text-brand-text" : "text-text-2 hover:text-foreground"
+                      )}
+                    >
+                      {s.name}
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
+          </section>
+        )}
+
+        {/* Notas */}
+        <section className="p-4">
+          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-text-3">
+            Notas
           </p>
-          <p className="mt-1 text-xs text-amber-300/80">
-            {HANDOFF_LABELS[conversation.handoffReason ?? ""] ??
-              "La IA está en pausa en esta conversación."}
-          </p>
+          <Textarea
+            rows={5}
+            placeholder="Notas internas sobre este contacto…"
+            value={notes}
+            disabled={!notesLoaded}
+            onChange={(e) => setNotes(e.target.value)}
+          />
           <Button
             size="sm"
-            variant="outline"
-            className="mt-2 w-full"
-            onClick={() => void onPatchConversation({ reactivate: true })}
+            variant="secondary"
+            className="mt-2"
+            disabled={savingNotes || !notesLoaded}
+            onClick={() => void saveNotes()}
           >
-            Reactivar IA
+            {savingNotes ? "Guardando…" : "Guardar notas"}
           </Button>
-        </div>
-      )}
-
-      <div className="flex items-center justify-between rounded-md border p-3">
-        <div>
-          <p className="text-sm font-medium">IA en esta conversación</p>
-          <p className="text-xs text-muted-foreground">
-            {conversation.aiEnabled ? "Respondiendo" : "En pausa"}
-          </p>
-        </div>
-        <button
-          role="switch"
-          aria-checked={conversation.aiEnabled}
-          aria-label="IA en esta conversación"
-          onClick={() =>
-            void onPatchConversation({ aiEnabled: !conversation.aiEnabled })
-          }
-          className={`relative h-6 w-11 rounded-full transition-colors ${
-            conversation.aiEnabled ? "bg-primary" : "bg-secondary"
-          }`}
-        >
-          <span
-            className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform ${
-              conversation.aiEnabled ? "translate-x-5" : "translate-x-0.5"
-            }`}
-          />
-        </button>
-      </div>
-
-      <div className="space-y-1.5">
-        <Label htmlFor="contact-notes">Notas</Label>
-        <Textarea
-          id="contact-notes"
-          rows={5}
-          placeholder="Notas internas sobre este contacto…"
-          value={notes}
-          disabled={!notesLoaded}
-          onChange={(e) => setNotes(e.target.value)}
-        />
-        <Button
-          size="sm"
-          variant="secondary"
-          disabled={savingNotes || !notesLoaded}
-          onClick={() => void saveNotes()}
-        >
-          {savingNotes ? "Guardando…" : "Guardar notas"}
-        </Button>
+        </section>
       </div>
     </div>
   );

@@ -28,6 +28,7 @@ export const GET = withAuth(async (session, _req: Request, ctx: Params) => {
           kind: stageRow.stage.kind,
         }
       : null,
+    lead: stageRow ? { id: stageRow.lead.id } : null,
   });
 });
 
