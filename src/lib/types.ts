@@ -3,6 +3,7 @@
 export type ConversationDto = {
   id: string;
   contact: { id: string; name: string; phone: string };
+  stageName: string | null;
   aiEnabled: boolean;
   handoffAt: string | null;
   handoffReason: string | null;

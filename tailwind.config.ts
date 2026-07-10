@@ -1,57 +1,79 @@
 import type { Config } from "tailwindcss";
 import animate from "tailwindcss-animate";
 
+/**
+ * Los nombres semánticos existentes (background, primary, muted…) se remapean
+ * a los tokens del sistema Atlas para que toda la app comparta el tema claro;
+ * la escala `brand-*` expone el acento white-label.
+ */
 const config: Config = {
-  darkMode: ["class"],
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        border: "var(--border)",
+        "border-strong": "var(--border-strong)",
+        input: "var(--border-strong)",
+        ring: "var(--accent)",
+        background: "var(--bg)",
+        foreground: "var(--text)",
+        subtle: "var(--bg-subtle)",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "var(--accent)",
+          foreground: "#ffffff",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "var(--bg-panel)",
+          foreground: "var(--text-2)",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "var(--danger)",
+          foreground: "#ffffff",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "var(--bg-panel)",
+          foreground: "var(--text-3)",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "var(--bg-hover)",
+          foreground: "var(--text)",
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: "var(--bg)",
+          foreground: "var(--text)",
         },
         popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+          DEFAULT: "var(--bg)",
+          foreground: "var(--text)",
         },
-        whatsapp: {
-          DEFAULT: "#25D366",
-          dark: "#1da851",
+        brand: {
+          DEFAULT: "var(--accent)",
+          hover: "var(--accent-hover)",
+          soft: "var(--accent-soft)",
+          tint: "var(--accent-tint)",
+          text: "var(--accent-text)",
         },
+        "text-2": "var(--text-2)",
+        "text-3": "var(--text-3)",
+        "text-4": "var(--text-4)",
+        chat: "var(--chat-bg)",
+        "bubble-out": "var(--bubble-out)",
+        "bubble-out-text": "var(--bubble-out-text)",
+        success: "var(--success)",
+        warning: "var(--warning)",
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        sm: "var(--radius-sm)",
+        md: "var(--radius)",
+        lg: "var(--radius-lg)",
+      },
+      boxShadow: {
+        sm: "var(--shadow-sm)",
+        md: "var(--shadow-md)",
+        pop: "var(--shadow-pop)",
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        sans: ["var(--font-geist)", "Hanken Grotesk", "-apple-system", "sans-serif"],
       },
     },
   },

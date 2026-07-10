@@ -99,7 +99,7 @@ export function AgentClient() {
       </header>
 
       {!aiConfigured && (
-        <div className="mx-6 mt-6 rounded-lg border border-primary/30 bg-primary/5 p-6 text-center">
+        <div className="mx-6 mt-6 rounded-lg border border-brand-soft bg-brand-tint p-6 text-center">
           <Sparkles className="mx-auto mb-2 h-8 w-8 text-primary" />
           <p className="font-medium">Configura tu proveedor de IA para activar el agente</p>
           <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
@@ -249,7 +249,7 @@ function KbSection({
           )}
         </div>
         {kbSize?.warning && (
-          <p className="text-xs text-amber-400">
+          <p className="text-xs text-[#8a6d3b]">
             El conocimiento se acerca al límite del contexto del modelo (v1 lo
             inyecta completo en cada turno). Considera depurar entradas.
           </p>

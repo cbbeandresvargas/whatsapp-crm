@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 
 const TABS = [
   { href: "/settings/whatsapp", label: "WhatsApp" },
+  { href: "/settings/branding", label: "Marca" },
   { href: "/settings/templates", label: "Plantillas" },
   { href: "/settings/team", label: "Equipo" },
 ] as const;
@@ -21,7 +22,7 @@ export function SettingsNav() {
           className={cn(
             "block rounded-md px-3 py-2 text-sm font-medium transition-colors",
             pathname.startsWith(t.href)
-              ? "bg-primary/10 text-primary"
+              ? "bg-brand-tint text-brand-text"
               : "text-muted-foreground hover:bg-accent hover:text-foreground"
           )}
         >

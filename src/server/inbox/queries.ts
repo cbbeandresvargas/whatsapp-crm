@@ -6,6 +6,7 @@ import { isWindowOpen, windowRemainingMs } from "@/server/inbox/window";
 export type ConversationDto = {
   id: string;
   contact: { id: string; name: string; phone: string };
+  stageName: string | null;
   aiEnabled: boolean;
   handoffAt: string | null;
   handoffReason: string | null;
@@ -29,12 +30,19 @@ export async function listConversations(
     order by m.created_at desc
     limit 1
   )`;
+  const stageSql = sql<string | null>`(
+    select s.name from lead l
+    join pipeline_stage s on s.id = l.stage_id
+    where l.contact_id = ${schema.contact.id}
+    limit 1
+  )`;
 
   const rows = await db
     .select({
       conversation: schema.conversation,
       contact: schema.contact,
       preview: previewSql,
+      stageName: stageSql,
     })
     .from(schema.conversation)
     .innerJoin(
@@ -51,7 +59,9 @@ export async function listConversations(
     )
     .orderBy(desc(sql`coalesce(${schema.conversation.lastMessageAt}, ${schema.conversation.createdAt})`));
 
-  return rows.map((r) => serializeConversation(r.conversation, r.contact, r.preview));
+  return rows.map((r) =>
+    serializeConversation(r.conversation, r.contact, r.preview, r.stageName)
+  );
 }
 
 export async function getConversation(
@@ -100,11 +110,13 @@ export async function listMessages(
 export function serializeConversation(
   c: typeof schema.conversation.$inferSelect,
   contact: typeof schema.contact.$inferSelect,
-  preview: string | null = null
+  preview: string | null = null,
+  stageName: string | null = null
 ): ConversationDto {
   return {
     id: c.id,
     contact: { id: contact.id, name: contact.name, phone: contact.phone },
+    stageName,
     aiEnabled: c.aiEnabled,
     handoffAt: c.handoffAt?.toISOString() ?? null,
     handoffReason: c.handoffReason,

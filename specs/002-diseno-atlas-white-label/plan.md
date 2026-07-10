@@ -35,28 +35,28 @@ sin cambios de webhook/idempotencia ✓ · verificación en vivo con Playwright 
 
 ## Tareas
 
-- [ ] T201 Tokens Atlas: `globals.css` (variables exactas) + `tailwind.config.ts`
+- [X] T201 Tokens Atlas: `globals.css` (variables exactas) + `tailwind.config.ts`
       remapeado + fuente Geist via next/font en `src/app/layout.tsx`
-- [ ] T202 `src/lib/branding.ts`: presets ACCENTS, derivación de acento
+- [X] T202 `src/lib/branding.ts`: presets ACCENTS, derivación de acento
       personalizado (+contraste), tipos; unit test de derivación/contraste
-- [ ] T203 API `GET/PUT /api/settings/branding` (metadata de la org; GET sin
+- [X] T203 API `GET/PUT /api/settings/branding` (metadata de la org; GET sin
       sesión → marca de la única org; PUT owner-only, Zod name≤30/hex)
-- [ ] T204 Root layout SSR: inyectar variables de acento + título con el nombre;
+- [X] T204 Root layout SSR: inyectar variables de acento + título con el nombre;
       login usa el nombre de la marca
-- [ ] T205 Nav Atlas: reescribir `(app)/layout.tsx` + `nav-link` (brand con
+- [X] T205 Nav Atlas: reescribir `(app)/layout.tsx` + `nav-link` (brand con
       inicial sobre acento, badge no-leídos en Bandeja, Ajustes+usuario abajo)
-- [ ] T206 Bandeja: lista (buscador, filtros Todas/No leídas, filas del handoff
+- [X] T206 Bandeja: lista (buscador, filtros Todas/No leídas, filas del handoff
       con presencia/preview/badge/tag de etapa)
-- [ ] T207 Hilo + composer: fondo chat, day-sep, burbujas agrupadas con hora
+- [X] T207 Hilo + composer: fondo chat, day-sep, burbujas agrupadas con hora
       interna y doble check, chips de plantillas aprobadas, send-btn de acento
-- [ ] T208 Panel de detalles colapsable: contacto, stepper de etapas del
+- [X] T208 Panel de detalles colapsable: contacto, stepper de etapas del
       pipeline (mueve el lead al hacer clic en un paso), notas, IA/handoff;
       persistencia en localStorage; botón reabrir
-- [ ] T209 Re-tematizar páginas restantes (pipeline, contactos, agente, lab,
+- [X] T209 Re-tematizar páginas restantes (pipeline, contactos, agente, lab,
       configuración, auth) con los componentes/tokens nuevos
-- [ ] T210 Configuración → Marca: UI (nombre + presets + color picker custom,
+- [X] T210 Configuración → Marca: UI (nombre + presets + color picker custom,
       vista previa), guardado + refresh
-- [ ] T211 Gate (typecheck/lint/build/test) + E2E: guion
+- [X] T211 Gate (typecheck/lint/build/test) + E2E: guion
       `tests/e2e/us-diseno.md` — regresión funcional de bandeja (SSE, enviar,
       ventana cerrada), colapsar/reabrir panel, stepper mueve etapa,
       white-label cambia nombre+acento y persiste; capturas nuevas para README

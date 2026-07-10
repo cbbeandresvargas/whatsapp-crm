@@ -56,13 +56,13 @@ export function WhatsappWizard() {
   return (
     <div className="max-w-3xl space-y-6">
       {connection?.status === "reconnect_required" && (
-        <div className="flex items-start gap-2 rounded-lg border border-red-600/30 bg-red-600/10 p-4 text-sm">
-          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
+        <div className="flex items-start gap-2 rounded-lg border border-[#ecd4d2] bg-[#faf1f0] p-4 text-sm">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
           <div>
-            <p className="font-medium text-red-300">
+            <p className="font-medium text-[#a2504c]">
               El token de WhatsApp expiró o fue revocado.
             </p>
-            <p className="text-red-300/80">
+            <p className="text-[#a2504c]/80">
               Los envíos están pausados. Pega un token nuevo abajo y prueba la
               conexión para reconectar.
             </p>
@@ -71,13 +71,13 @@ export function WhatsappWizard() {
       )}
 
       {connection && connection.status === "connected" && (
-        <div className="flex items-center gap-3 rounded-lg border border-emerald-600/30 bg-emerald-600/10 p-4">
-          <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+        <div className="flex items-center gap-3 rounded-lg border border-[#d8e8dd] bg-[#eff7f1] p-4">
+          <CheckCircle2 className="h-5 w-5 text-success" />
           <div className="flex-1 text-sm">
-            <p className="font-medium text-emerald-300">
+            <p className="font-medium text-[#3f6b52]">
               Número conectado: {connection.displayPhoneNumber ?? connection.phoneNumberId}
             </p>
-            <p className="text-emerald-300/80">
+            <p className="text-[#3f6b52]/80">
               {connection.verifiedName ? `${connection.verifiedName} · ` : ""}
               token …{connection.tokenLast4}
             </p>
@@ -238,7 +238,7 @@ function ConnectForm({
 
         {testResult && (
           <p
-            className={`text-sm ${testResult.ok ? "text-emerald-400" : "text-destructive"}`}
+            className={`text-sm ${testResult.ok ? "text-success" : "text-destructive"}`}
           >
             {testResult.ok
               ? `✓ Token válido para ${testResult.display}. Ya puedes guardar.`
@@ -288,7 +288,7 @@ function WebhookCard({ webhook }: { webhook: WebhookInfo }) {
       </CardHeader>
       <CardContent className="space-y-3">
         {!webhook.isHttps && (
-          <p className="flex items-start gap-2 rounded-md border border-amber-600/30 bg-amber-600/10 p-3 text-xs text-amber-300">
+          <p className="flex items-start gap-2 rounded-md border border-[#ece2cf] bg-[#faf7f0] p-3 text-xs text-[#8a6d3b]">
             <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
             La URL configurada no es https: Meta exige https para los webhooks.
             Ajusta APP_BASE_URL con tu dominio público.
@@ -337,7 +337,7 @@ function WebhookCard({ webhook }: { webhook: WebhookInfo }) {
           </div>
         </div>
         {webhook.signatureLayer ? (
-          <p className="flex items-center gap-2 text-xs text-emerald-400">
+          <p className="flex items-center gap-2 text-xs text-success">
             <ShieldCheck className="h-4 w-4" /> Verificación de firma activa
             (META_APP_SECRET configurado): cada evento se valida con
             x-hub-signature-256.

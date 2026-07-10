@@ -143,8 +143,8 @@ export function StageManager({
         </ul>
 
         {deleting && (
-          <div className="mt-4 rounded-md border border-amber-600/30 bg-amber-600/10 p-3">
-            <p className="text-sm text-amber-300">
+          <div className="mt-4 rounded-md border border-[#ece2cf] bg-[#faf7f0] p-3">
+            <p className="text-sm text-[#8a6d3b]">
               &quot;{deleting.name}&quot; tiene tarjetas. Elige a dónde moverlas:
             </p>
             <div className="mt-2 flex gap-2">
