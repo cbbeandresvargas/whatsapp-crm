@@ -101,7 +101,15 @@ export async function processMessagesValue(value: WebhookValue): Promise<void> {
   if (!phoneNumberId) return;
 
   const credentials = await getCredentialsByPhoneNumberId(phoneNumberId);
-  if (!credentials) return; // número no conectado a esta instancia
+  if (!credentials) {
+    // Caso típico: webhook/override configurado ANTES de guardar la conexión
+    // en el wizard — el evento llega pero no hay a qué organización enrutarlo.
+    console.warn(
+      `[webhook] evento para phone_number_id desconocido (${phoneNumberId}): ` +
+        "guarda la conexión en Configuración → WhatsApp para recibir mensajes"
+    );
+    return;
+  }
 
   const organizationId = credentials.organizationId;
 

@@ -283,7 +283,13 @@ function WebhookCard({ webhook }: { webhook: WebhookInfo }) {
         <CardTitle>Webhook de WhatsApp</CardTitle>
         <CardDescription>
           Pega estos valores en el panel de Meta (modo directo) o úsalos en el
-          override de tu backend de agencia (a nivel WABA).
+          override de tu backend de agencia (a nivel WABA).{" "}
+          <strong className="text-foreground">
+            Guarda la conexión ANTES de configurar el webhook:
+          </strong>{" "}
+          la verificación (handshake) funciona sin guardar, pero los mensajes
+          solo se reciben si la conexión está guardada — se enrutan por tu
+          Phone Number ID.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">

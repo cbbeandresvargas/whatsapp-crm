@@ -156,13 +156,18 @@ del cliente se conecta con el **override de callback por WABA**:
                         (pegado en el wizard)
 ```
 
-**Checklist de 5 pasos:**
+**Checklist de 5 pasos (el orden importa):**
 
 1. **Despliega la instancia primero** (Ruta A o B) — el webhook debe estar en
-   línea para el paso 3.
+   línea para el paso 4.
 2. **Embedded Signup en TU plataforma**: el cliente conecta su número en tu
    onboarding y tu backend guarda su token (intercambio de código → token).
-3. **Configura el override del callback a nivel WABA** hacia la instancia:
+3. **Pega las credenciales en el wizard** de la instancia (WABA ID, Phone
+   Number ID, token) → **Probar conexión** → **GUARDAR**. Este paso va ANTES
+   del override: el webhook enruta cada mensaje por el Phone Number ID
+   **guardado** — sin conexión guardada, el handshake del paso 4 pasa igual,
+   pero los mensajes que lleguen se descartan en silencio.
+4. **Configura el override del callback a nivel WABA** hacia la instancia:
 
    ```http
    POST https://graph.facebook.com/v25.0/{WABA_ID_DEL_CLIENTE}/subscribed_apps
@@ -178,11 +183,10 @@ del cliente se conecta con el **override de callback por WABA**:
    La URL y el verify token exactos están en **Configuración → WhatsApp** de la
    instancia. Meta hace el handshake en ese momento (la URI debe responder, si
    no devuelve 422).
-4. **Registra el número** en la Cloud API si aún no lo está
-   (`POST /{PHONE_NUMBER_ID}/register`).
-5. **Pega las credenciales en el wizard** de la instancia (WABA ID, Phone
-   Number ID, token) → **Probar conexión** → Guardar. Listo: los mensajes del
-   cliente llegan directo a SU instancia, no a tu backend.
+5. **Registra el número** en la Cloud API si aún no lo está
+   (`POST /{PHONE_NUMBER_ID}/register`) y manda un mensaje de prueba al número:
+   debe aparecer en la bandeja en uno o dos segundos. Los mensajes del cliente
+   llegan directo a SU instancia, no a tu backend.
 
 > ⚠️ **Seguridad**: la URL del webhook contiene el verify token como segmento
 > secreto — trátala como una contraseña (no la publiques ni la mandes por
@@ -231,6 +235,12 @@ clientes reales.
 **El webhook no se verifica en Meta** — El dominio aún no resuelve, no es
 https, o pegaste mal la URL/verify token. Cópialos exactos de Configuración →
 WhatsApp.
+
+**El webhook verificó bien pero no llegan mensajes** — Casi siempre: la
+conexión no está GUARDADA en el wizard (el handshake no la necesita, la
+ingesta sí — enruta por el Phone Number ID guardado). Entra a Configuración →
+WhatsApp, guarda la conexión y reenvía un mensaje. Los logs de la instancia
+muestran una advertencia con el Phone Number ID desconocido.
 
 **Llegan mensajes pero no salen** — Revisa el estado de la conexión en
 Configuración → WhatsApp. Si dice "reconectar", el token expiró: pega uno
