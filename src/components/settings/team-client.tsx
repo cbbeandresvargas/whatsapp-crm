@@ -77,7 +77,7 @@ export function TeamClient() {
         <CardHeader>
           <CardTitle>Crear cuenta de equipo</CardTitle>
           <CardDescription>
-            Sin correos ni invitaciones: comparte tú mismo la contraseña
+            Comparte la contraseña
             temporal con tu compañero (se muestra UNA sola vez).
           </CardDescription>
         </CardHeader>

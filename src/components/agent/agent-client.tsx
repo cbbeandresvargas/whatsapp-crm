@@ -85,14 +85,12 @@ export function AgentClient() {
             aria-label="Agente encendido"
             disabled={!aiConfigured}
             onClick={() => void saveProfile({ enabled: !profile.enabled })}
-            className={`relative h-6 w-11 rounded-full transition-colors disabled:opacity-40 ${
-              profile.enabled ? "bg-primary" : "bg-secondary"
-            }`}
+            className={`relative h-6 w-11 rounded-full transition-colors disabled:opacity-40 ${profile.enabled ? "bg-primary" : "bg-secondary"
+              }`}
           >
             <span
-              className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform ${
-                profile.enabled ? "translate-x-5" : "translate-x-0.5"
-              }`}
+              className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform ${profile.enabled ? "translate-x-5" : "translate-x-0.5"
+                }`}
             />
           </button>
         </div>
@@ -102,12 +100,6 @@ export function AgentClient() {
         <div className="mx-6 mt-6 rounded-lg border border-brand-soft bg-brand-tint p-6 text-center">
           <Sparkles className="mx-auto mb-2 h-8 w-8 text-primary" />
           <p className="font-medium">Configura tu proveedor de IA para activar el agente</p>
-          <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
-            Agrega <code className="rounded bg-secondary px-1">OPENROUTER_API_TOKEN</code> y{" "}
-            <code className="rounded bg-secondary px-1">OPENROUTER_MODEL</code> a las variables
-            de entorno de la instancia y reiníciala. Mientras tanto puedes dejar listo el
-            comportamiento y el conocimiento aquí abajo.
-          </p>
         </div>
       )}
 

@@ -63,10 +63,6 @@ export function BrandingClient() {
       <Card>
         <CardHeader>
           <CardTitle>Marca del CRM</CardTitle>
-          <CardDescription>
-            Este CRM es tuyo: ponle el nombre de tu negocio y tu color. Se
-            reflejan en toda la interfaz y en la pantalla de inicio de sesión.
-          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
           <div className="space-y-1.5">

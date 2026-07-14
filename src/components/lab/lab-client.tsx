@@ -119,16 +119,11 @@ export function LabClient() {
   if (!aiConfigured) {
     return (
       <div className="flex h-full flex-col">
-        <Header running={false} launching={false} onLaunch={() => {}} disabled />
+        <Header running={false} launching={false} onLaunch={() => { }} disabled />
         <div className="m-6 rounded-lg border border-brand-soft bg-brand-tint p-8 text-center">
           <Sparkles className="mx-auto mb-2 h-8 w-8 text-primary" />
           <p className="font-medium">
             Configura tu proveedor de IA para usar el Laboratorio
-          </p>
-          <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
-            El Laboratorio necesita el agente activo: agrega{" "}
-            <code className="rounded bg-secondary px-1">OPENROUTER_API_TOKEN</code> a la
-            instancia y vuelve aquí.
           </p>
         </div>
       </div>
@@ -234,17 +229,15 @@ function HistoryList({
         <button
           key={run.id}
           onClick={() => onSelect(run.id)}
-          className={`w-full rounded-lg border p-3 text-left transition-colors hover:bg-accent/50 ${
-            selectedRunId === run.id ? "border-primary/50 bg-accent/60" : "bg-card"
-          }`}
+          className={`w-full rounded-lg border p-3 text-left transition-colors hover:bg-accent/50 ${selectedRunId === run.id ? "border-primary/50 bg-accent/60" : "bg-card"
+            }`}
         >
           <div className="flex items-center justify-between">
             <ScoreBadge run={run} />
             {run.delta !== null && run.delta !== 0 && (
               <span
-                className={`flex items-center gap-0.5 text-xs font-medium ${
-                  run.delta > 0 ? "text-success" : "text-destructive"
-                }`}
+                className={`flex items-center gap-0.5 text-xs font-medium ${run.delta > 0 ? "text-success" : "text-destructive"
+                  }`}
               >
                 {run.delta > 0 ? (
                   <TrendingUp className="h-3.5 w-3.5" />
