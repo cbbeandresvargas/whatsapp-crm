@@ -1,5 +1,5 @@
 # ============================================================
-# Vocero CRM — imagen multi-etapa (Next.js standalone + Node 22)
+# WhatsApp CRM — imagen multi-etapa (Next.js standalone + Node 22)
 # Los secretos NO se necesitan en build: llegan en runtime.
 # ============================================================
 
@@ -28,16 +28,16 @@ FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN addgroup -S vocero && adduser -S vocero -G vocero
+RUN addgroup -S whatsapp_crm && adduser -S whatsapp_crm -G whatsapp_crm
 
-COPY --from=builder --chown=vocero:vocero /app/.next/standalone ./
-COPY --from=builder --chown=vocero:vocero /app/.next/static ./.next/static
-COPY --from=builder --chown=vocero:vocero /app/public ./public
-COPY --from=builder --chown=vocero:vocero /app/migrate.bundle.mjs ./migrate.mjs
-COPY --from=builder --chown=vocero:vocero /app/seed-demo.bundle.mjs ./seed-demo.mjs
-COPY --from=builder --chown=vocero:vocero /app/drizzle ./drizzle
+COPY --from=builder --chown=whatsapp_crm:whatsapp_crm /app/.next/standalone ./
+COPY --from=builder --chown=whatsapp_crm:whatsapp_crm /app/.next/static ./.next/static
+COPY --from=builder --chown=whatsapp_crm:whatsapp_crm /app/public ./public
+COPY --from=builder --chown=whatsapp_crm:whatsapp_crm /app/migrate.bundle.mjs ./migrate.mjs
+COPY --from=builder --chown=whatsapp_crm:whatsapp_crm /app/seed-demo.bundle.mjs ./seed-demo.mjs
+COPY --from=builder --chown=whatsapp_crm:whatsapp_crm /app/drizzle ./drizzle
 
-USER vocero
+USER whatsapp_crm
 EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
